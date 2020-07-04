@@ -8,8 +8,14 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-data = np.load('Data/fa_data_2012_2019.npy', allow_pickle=True)
-data = data[data[:, 0].argsort()]
+data_wn = np.load('Data/fa_data_2012_2019.npy', allow_pickle=True)
+data_wn = data_wn[data_wn[:, 0].argsort()]
+
+idx = [x for x in range(data_wn.shape[1])]
+idx.remove(1)
+
+data = data_wn[:, idx]
+data = data.astype(float)
 
 # data = pd.read_csv('../data/data_stocks.csv')
 # data = data.drop(['DATE'], 1)
