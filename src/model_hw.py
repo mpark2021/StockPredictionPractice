@@ -8,19 +8,25 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-data = pd.read_csv('../data/data_stocks.csv')
-data = data.drop(['DATE'], 1)
+data = np.load('Data/fa_data_2012_2019.npy', allow_pickle=True)
+data = data[data[:, 0].argsort()]
+
+# data = pd.read_csv('../data/data_stocks.csv')
+# data = data.drop(['DATE'], 1)
 
 # m = number of data / f = feature dimension (Y+X)
 
 (m, f) = data.shape
-data = data.values
+# data = data.values
 
 # training / test index
 
+cut = list(data[:, 0]).index(19.0)
+
+
 train_start = 0
-train_end = int(np.floor(m*0.8))
-test_start = train_end
+train_end = cut
+test_start = cut
 test_end = m
 data_train = data[np.arange(train_start, train_end), :]
 data_test = data[np.arange(test_start, test_end), :]
@@ -34,14 +40,14 @@ data_test = scaler.transform(data_test)
 
 # training set & test set
 
-X_train = data_train[:, 1:]
-y_train = data_train[:, 0]
-X_test = data_test[:, 1:]
-y_test = data_test[:, 0]
+X_train = data_train[:, :-1]
+y_train = data_train[:, -1]
+X_test = data_test[:, :-1]
+y_test = data_test[:, -1]
 
-n_stocks = f - 1
+n_stocks = X_train.shape[1]
 
-layer = [2048, 1024, 512, 256, 128, 64]
+layer = [2048, 1024, 512, 256, 128]
 
 # session
 
@@ -113,24 +119,25 @@ plt.show()
 
 # fit
 
-batch_size = 256
+batch_size = 32
 mse_train = []
 mse_test = []
-num_epoch = 16
+num_epoch = 50
 
 for epoch in range(num_epoch):
     shuffle = np.random.permutation(np.arange(len(y_train)))
     X_train = X_train[shuffle]
     y_train = y_train[shuffle]
 
-    for i in range(0, m // batch_size):
+    for i in range(0, cut // batch_size):
         start = i * batch_size
         batch_X = X_train[start:start + batch_size]
         batch_y = y_train[start:start + batch_size]
 
         net.run(adam, feed_dict={X: batch_X, y: batch_y})
+        plt.title(f'Epoch: {epoch} / Batch: {i}')
 
-        if np.mod(i, 50) == 0:
+        if np.mod(i, 10) == 0:
             mse_train.append(net.run(mse, feed_dict={X: X_train, y: y_train}))
             mse_test.append(net.run(mse, feed_dict={X: X_test, y: y_test}))
             print(f'Train Error: {mse_train[-1]} / Test Error: {mse_test[-1]}')
