@@ -119,10 +119,10 @@ plt.show()
 
 # fit
 
-batch_size = 32
+batch_size = 128
 mse_train = []
 mse_test = []
-num_epoch = 50
+num_epoch = 100
 
 for epoch in range(num_epoch):
     shuffle = np.random.permutation(np.arange(len(y_train)))
