@@ -118,7 +118,7 @@ def run(network, error, output, save, X_train, y_train, X_cv, y_cv, X_test, y_te
 
                 pred = output(X_test)
 
-        print(f'{epoch+1}Train Error: {mse_train[-1]} / Cross Validation Error: {mse_cv[-1]} / Test Error: {mse_test[-1]}')
+        print(f'{epoch+1:03d}Train Error: {mse_train[-1]} / Cross Validation Error: {mse_cv[-1]} / Test Error: {mse_test[-1]}')
 
         if (epoch+1) % 25 == 0:
             save(epoch)
