@@ -9,7 +9,7 @@ def model(layer, num_features):
 
     # session
 
-    net = tf.InteractiveSession()
+    net = tf.Session()
 
     X = tf.placeholder(dtype=tf.float32, shape=[None, num_features])
     y = tf.placeholder(dtype=tf.float32, shape=[None])
@@ -76,13 +76,6 @@ def model(layer, num_features):
 
 def run(network, error, output, X_train, y_train, X_cv, y_cv, X_test, y_test, batch_size=8, num_epoch=100):
 
-    plt.ion()
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    line1, = ax1.plot(y_test)
-    line2, = ax1.plot(y_test * 0.5)
-    plt.show()
-
     # fit
 
     mse_train = []
@@ -101,7 +94,6 @@ def run(network, error, output, X_train, y_train, X_cv, y_cv, X_test, y_test, ba
             batch_y = y_train[start:start + batch_size]
 
             network(batch_X, batch_y)
-            plt.title(f'Epoch: {epoch} / Batch: {i}')
 
             if np.mod(i, 10) == 0:
                 mse_train.append(error(X_train, y_train))
@@ -110,10 +102,6 @@ def run(network, error, output, X_train, y_train, X_cv, y_cv, X_test, y_test, ba
                 print(f'Train Error: {mse_train[-1]} / Cross Validation Error: {mse_cv[-1]} / Test Error: {mse_test[-1]}')
 
                 pred = output(X_test)
-                line2.set_ydata(pred)
-            plt.pause(0.001)
-
-    plt.waitforbuttonpress()
     return pred.transpose()
 
 
