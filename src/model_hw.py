@@ -23,12 +23,6 @@ def model(layer, num_features):
     X = tf.placeholder(dtype=tf.float32, shape=[None, num_features])
     y = tf.placeholder(dtype=tf.float32, shape=[None])
 
-
-    # saver
-
-    saver = tf.train.Saver(keep_checkpoint_every_n_hours=1,
-                           save_relative_paths=True)
-
     # theta initialization
 
     sigma = 1
@@ -81,6 +75,12 @@ def model(layer, num_features):
     adam = tf.train.AdamOptimizer().minimize(mse)
 
     net.run(fetches=tf.global_variables_initializer())
+
+    # saver
+
+    saver = tf.train.Saver(keep_checkpoint_every_n_hours=1,
+                           save_relative_paths=True)
+
 
     network = lambda data_x, data_y: net.run(adam, feed_dict={X: data_x, y: data_y})
     error = lambda data_x, data_y: net.run(mse,feed_dict={X: data_x, y: data_y})
