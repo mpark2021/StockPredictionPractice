@@ -8,7 +8,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 # target
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     path = './data/fa_data_2012_2019.npy'
 else:
     if 'p' in sys.argv[2].lower():
