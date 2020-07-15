@@ -74,7 +74,7 @@ def model(layer, num_features):
     return network, error, output
 
 
-def run(network, error, output, X_train, y_train, X_test, y_test, batch_size=8, num_epoch=100):
+def run(network, error, output, X_train, X_cv, y_cv, y_train, X_test, y_test, batch_size=8, num_epoch=100):
 
     plt.ion()
     fig = plt.figure()
@@ -86,6 +86,7 @@ def run(network, error, output, X_train, y_train, X_test, y_test, batch_size=8, 
     # fit
 
     mse_train = []
+    mse_cv = []
     mse_test = []
     pred = y_test.transpose()
 
@@ -104,8 +105,9 @@ def run(network, error, output, X_train, y_train, X_test, y_test, batch_size=8, 
 
             if np.mod(i, 10) == 0:
                 mse_train.append(error(X_train, y_train))
+                mse_cv.append(error(X_cv, y_cv))
                 mse_test.append(error(X_test, y_test))
-                print(f'Train Error: {mse_train[-1]} / Test Error: {mse_test[-1]}')
+                print(f'Train Error: {mse_train[-1]} / Cross Validation Error: {mse_cv[-1]} / Test Error: {mse_test[-1]}')
 
                 pred = output(X_test)
                 line2.set_ydata(pred)
