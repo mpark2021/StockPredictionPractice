@@ -2,7 +2,16 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import warnings
+import os
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
+def create_checkpoint_dir(path):
+    if not os.path.exists('checkpoints'):
+        os.makedirs('checkpoints')
+
+    if not os.path.exists(f'checkpoints/{path}'):
+        os.makedirs(f'checkpoints/{path}')
 
 
 def model(layer, num_features):
@@ -13,6 +22,12 @@ def model(layer, num_features):
 
     X = tf.placeholder(dtype=tf.float32, shape=[None, num_features])
     y = tf.placeholder(dtype=tf.float32, shape=[None])
+
+
+    # saver
+
+    saver = tf.train.Saver(keep_checkpoint_every_n_hours=1,
+                           save_relative_paths=True)
 
     # theta initialization
 
@@ -70,11 +85,12 @@ def model(layer, num_features):
     network = lambda data_x, data_y: net.run(adam, feed_dict={X: data_x, y: data_y})
     error = lambda data_x, data_y: net.run(mse,feed_dict={X: data_x, y: data_y})
     output = lambda data_x: net.run(out, feed_dict={X: data_x})
+    save = lambda step: saver.save(net, f'./checkpoints/{layer[0]}', step)
 
-    return network, error, output
+    return network, error, output, save
 
 
-def run(network, error, output, X_train, y_train, X_cv, y_cv, X_test, y_test, batch_size=8, num_epoch=100):
+def run(network, error, output, save, X_train, y_train, X_cv, y_cv, X_test, y_test, batch_size=8, num_epoch=100):
 
     # fit
 
@@ -102,6 +118,10 @@ def run(network, error, output, X_train, y_train, X_cv, y_cv, X_test, y_test, ba
                 print(f'Train Error: {mse_train[-1]} / Cross Validation Error: {mse_cv[-1]} / Test Error: {mse_test[-1]}')
 
                 pred = output(X_test)
+
+        if (epoch+1) % 25 == 0:
+            save(epoch)
+
     return pred.transpose()
 
 
