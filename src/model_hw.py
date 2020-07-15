@@ -74,7 +74,7 @@ def model(layer, num_features):
     return network, error, output
 
 
-def run(network, error, output, X_train, X_cv, y_cv, y_train, X_test, y_test, batch_size=8, num_epoch=100):
+def run(network, error, output, X_train, y_train, X_cv, y_cv, X_test, y_test, batch_size=8, num_epoch=100):
 
     plt.ion()
     fig = plt.figure()
