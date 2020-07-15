@@ -55,7 +55,7 @@ def process(data_train, data_cv, data_test):
 
     X_train = data_train[:, :-1]
     y_train = data_train[:, -1]
-    X_cv = data_cv[:, -1]
+    X_cv = data_cv[:, :-1]
     y_cv = data_cv[:, -1]
     X_test = data_test[:, :-1]
     y_test = data_test[:, -1]
