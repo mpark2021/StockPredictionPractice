@@ -100,7 +100,7 @@ def run(network, error, output, save, X_train, y_train, X_cv, y_cv, X_test, y_te
     pred = y_test.transpose()
 
     for epoch in range(num_epoch):
-        shuffle = np.random.permutation(np.arange(len(y_train)))
+        shuffle = np.random.permutation(np.arange(len(y_train))) # 이거 참고하기!!! (random permutation & arange)
         X_train = X_train[shuffle]
         y_train = y_train[shuffle]
 

@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
 
-def load(path, cv_year = 18.0, test_year=19.0):
+def load(path, cv_year = 18.0, test_year=19.0): # test만 19.0 그대로 & cv랑 train은 random (10%만 cv로, 나머지는 train)
     data_wn = np.load(path, allow_pickle=True)
     data_wn = data_wn[data_wn[:, 0].argsort()]
 
