@@ -9,7 +9,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # target
 if len(sys.argv) < 3:
-    path = './data/fa_data_2012_2019_[5.0, 3.0, 2.0].npy'
+    path = './Data/fa_data_2012_2019_[5.0, 3.0, 2.0].npy'
 else:
     if 'p' in sys.argv[2].lower():
         path = './Data/fa_data_2012_2019_[5.0, 3.0, 2.0]_pit.npy'
