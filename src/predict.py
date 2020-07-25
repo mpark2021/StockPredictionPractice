@@ -12,7 +12,7 @@ def _set_scaler():
     global _scaler, _X_test, _y_test, _X_raw
     from src.preprocess import load, process
 
-    data_train, data_cv, data_test, data_raw_test = load('./Data/fa_data_2012_2019_[5.0, 3.0, 2.0].npy')
+    data_train, data_cv, data_test, data_raw_test = load('./Data/fa_data_2012_2019_[5.0, 3.0, 2.0]_mod.npy')
     (X_train, y_train), (X_cv, y_cv),(X_test, y_test), scaler = process(data_train, data_cv, data_test)
 
     _scaler = scaler
@@ -41,7 +41,7 @@ def predict(data, path):
 if __name__ == "__main__":
 
     _set_scaler()
-    path = './checkpoints/8192/8192-99.meta'
+    path = './checkpoints/2048/2048-99.meta'
     names = _X_raw[:, 1]
     price = (predict(_X_test, path))
     price = price
