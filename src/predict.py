@@ -4,11 +4,12 @@ import numpy as np
 
 _scaler = None
 _X_test = None
+_y_test = None
 _X_raw = None
 
 
 def _set_scaler():
-    global _scaler, _X_test, _X_raw
+    global _scaler, _X_test, _y_test, _X_raw
     from src.preprocess import load, process
 
     data_train, data_cv, data_test, data_raw_test = load('./Data/fa_data_2012_2019_[5.0, 3.0, 2.0].npy')
@@ -16,6 +17,7 @@ def _set_scaler():
 
     _scaler = scaler
     _X_test = X_test
+    _y_test = data_test[:, -1]
     _X_raw = data_raw_test
 
 
@@ -42,9 +44,9 @@ if __name__ == "__main__":
     path = './checkpoints/8192/8192-99.meta'
     names = _X_raw[:, 1]
     price = (predict(_X_test, path))
-    price = price / 1000000
+    price = price
 
-    header = ['season', 'name']
+    header = ['season', 'name', 'age']
     pos = ['SP', 'RP', '1B', '2B', '3B', 'SS', 'RF', 'CF', 'LF', 'C', 'DH', 'OF', 'P']
     position = []
     for raw in _X_raw:
@@ -52,12 +54,22 @@ if __name__ == "__main__":
             if p == 1:
                 position.append(pos[i])
                 break
-    position = np.reshape(np.asarry(position), (len(position), 1))
+    position = np.reshape(np.asarray(position), (len(position), 1))
     print(position)
 
-    result = np.concatenate((np.reshape(names, (len(names), 1)), np.reshape(price, (len(price), 1)), position), axis=1)
+    result = np.concatenate((np.reshape(names, (len(names), 1)), np.reshape(price, (len(price), 1)), position, np.reshape(_y_test, (len(_y_test), 1))), axis=1)
     print(result)
+
+    import matplotlib.pyplot as plt
+
+    plt.ion()
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax1.plot(_y_test, 'r')
+    ax1.plot(result[:, 1], 'g')
+    plt.waitforbuttonpress()
 
     with open('./data/result.csv', 'w') as f:
         for r in result:
-            f.write(f'{r[0]}, {r[1]}, {r[2]}\n')
+            f.write(f'{r[0]}, {r[1]/1000000}, {r[3]/1000000}, {r[2]}\n')
+            # name, predicted, actual, position
