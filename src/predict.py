@@ -41,6 +41,15 @@ def predict(data, path):
 if __name__ == "__main__":
 
     _set_scaler()
+
+    data = np.load('./Data/fa_data_2012_2019_[5.0, 3.0, 2.0]_mod.npy', allow_pickle=True)
+    _X_raw = data
+    _y_test = data[:, -1]
+    idx = [x for x in range(data.shape[1])]
+    idx.remove(1)
+    data = _scaler.transform(data[:, idx])
+    _X_test = data[:, :-1]
+
     path = './checkpoints/2048/2048-99.meta'
     names = _X_raw[:, 1]
     price = (predict(_X_test, path))
@@ -49,6 +58,7 @@ if __name__ == "__main__":
     header = ['season', 'name', 'age']
     pos = ['SP', 'RP', '1B', '2B', '3B', 'SS', 'RF', 'CF', 'LF', 'C', 'DH', 'OF', 'P']
     position = []
+
     for raw in _X_raw:
         for i, p in enumerate(raw[len(header):len(header) + len(pos)]):
             if p == 1:
@@ -69,7 +79,7 @@ if __name__ == "__main__":
     ax1.plot(result[:, 1], 'g')
     plt.waitforbuttonpress()
 
-    with open('./data/result.csv', 'w') as f:
+    with open('./Data/result_all.csv', 'w') as f:
         for r in result:
             f.write(f'{r[0]}, {r[1]/1000000}, {r[3]/1000000}, {r[2]}\n')
             # name, predicted, actual, position
