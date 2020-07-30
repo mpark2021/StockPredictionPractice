@@ -8,11 +8,11 @@ _y_test = None
 _X_raw = None
 
 
-def _set_scaler():
+def _set_scaler(path):
     global _scaler, _X_test, _y_test, _X_raw
     from src.preprocess import load, process
 
-    data_train, data_cv, data_test, data_raw_test = load('./Data/fa_data_2012_2019_[5.0, 3.0, 2.0]_mod.npy')
+    data_train, data_cv, data_test, data_raw_test = load(path)
     (X_train, y_train), (X_cv, y_cv),(X_test, y_test), scaler = process(data_train, data_cv, data_test)
 
     _scaler = scaler
@@ -38,17 +38,36 @@ def predict(data, path):
         return _scaler.inverse_transform(np.concatenate((data, np.transpose(result)), axis=1))[:, -1]
 
 
+def create_path(suffix, start, end, ratio, is_modified):
+    path = f'./Data/fa_data_{suffix}_{start}_{end}_{str(ratio)}'
+    if is_modified:
+        path = f'{path}_mod'
+    path = f'{path}.npy'
+
+    return path
+
+
 if __name__ == "__main__":
+    suffix = 'leagueadjust'
+    start = 2012
+    end = 2019
+    ratio = [5.0, 3.0, 2.0]
+    is_modified = True
 
-    _set_scaler()
+    path = create_path(suffix, start, end, ratio, is_modified)
 
-    data = np.load('./Data/fa_data_2012_2019_[5.0, 3.0, 2.0]_mod.npy', allow_pickle=True)
-    _X_raw = data
-    _y_test = data[:, -1]
-    idx = [x for x in range(data.shape[1])]
-    idx.remove(1)
-    data = _scaler.transform(data[:, idx])
-    _X_test = data[:, :-1]
+    collect_all = False
+    _set_scaler(path)
+
+    if collect_all:
+
+        data = np.load(path, allow_pickle=True)
+        _X_raw = data
+        _y_test = data[:, -1]
+        idx = [x for x in range(data.shape[1])]
+        idx.remove(1)
+        data = _scaler.transform(data[:, idx])
+        _X_test = data[:, :-1]
 
     path = './checkpoints/2048/2048-99.meta'
     names = _X_raw[:, 1]
@@ -78,6 +97,10 @@ if __name__ == "__main__":
     ax1.plot(_y_test, 'r')
     ax1.plot(result[:, 1], 'g')
     plt.waitforbuttonpress()
+
+    save_path = './Data/result.csv'
+    if collect_all:
+        save_path = './Data/result_all.csv'
 
     with open('./Data/result_all.csv', 'w') as f:
         for r in result:
