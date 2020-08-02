@@ -48,7 +48,7 @@ def create_path(suffix, start, end, ratio, is_modified):
 
 
 if __name__ == "__main__":
-    suffix = 'fangraphs'
+    suffix = 'all'
     start = 2012
     end = 2019
     ratio = [5.0, 3.0, 2.0]
