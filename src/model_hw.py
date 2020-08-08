@@ -68,11 +68,25 @@ def model(layer, num_features):
 
     # cost function
 
+    reg = []
+    for w in W_hidden:
+        reg.append(tf.nn.l2_loss(w))
+    reg.append(tf.nn.l2_loss(W_out))
+
     mse = tf.reduce_mean(tf.squared_difference(out, y))
+
+    # l = regularization parameter (lambda)
+    l = 0.01
+
+    reg_mse = mse
+    for r in reg:
+        reg_mse += r * l
+
+    loss = tf.reduce_mean(reg_mse)
 
     # optimizer
 
-    adam = tf.train.AdamOptimizer().minimize(mse)
+    adam = tf.train.AdamOptimizer().minimize(loss)
 
     net.run(fetches=tf.global_variables_initializer())
 
@@ -80,7 +94,6 @@ def model(layer, num_features):
 
     saver = tf.train.Saver(keep_checkpoint_every_n_hours=1,
                            save_relative_paths=True)
-
 
     network = lambda data_x, data_y: net.run(adam, feed_dict={X: data_x, y: data_y})
     error = lambda data_x, data_y: net.run(mse,feed_dict={X: data_x, y: data_y})
