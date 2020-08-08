@@ -14,7 +14,7 @@ def create_checkpoint_dir(path):
         os.makedirs(f'checkpoints/{path}')
 
 
-def model(layer, num_features, name, l):
+def model(layer, num_features, name, l, use_reg):
 
     # session
 
@@ -76,8 +76,9 @@ def model(layer, num_features, name, l):
     mse = tf.reduce_mean(tf.squared_difference(out, y))
 
     reg_mse = mse
-    for r in reg:
-        reg_mse += r * l
+    if use_reg:
+        for r in reg:
+            reg_mse += r * l
 
     loss = tf.reduce_mean(reg_mse)
 
